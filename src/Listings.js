@@ -8,7 +8,6 @@ const CarListings = () => {
         axios.get('http://localhost/getListings.php')
             .then(response => {
                 setListings(response.data);
-                console.log(response.data);
             })
             .catch(error => {
                 console.error("There was an error fetching the listings!", error);
@@ -17,11 +16,12 @@ const CarListings = () => {
 
     return (
         <div>
-            <h1>Car Listings</h1>
+            <h1 style={{textAlign: 'center'}}>Car Listings</h1>
             <ul>
                 {listings.map(listing => (
                     <li key={listing.id}>
                         <h2>{listing.make} {listing.model}</h2>
+                        <img src={`${process.env.PUBLIC_URL}/photos/${listing.img_path}`} alt='car image' />
                         <p>Type: {listing.type}</p>
                         <p>Price: ${listing.price}</p>
                         <p>Description: {listing.description}</p>
