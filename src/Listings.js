@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './listings.css';
 
 const CarListings = () => {
     const [listings, setListings] = useState([]);
@@ -15,8 +16,8 @@ const CarListings = () => {
     }, []);
 
     return (
-        <div>
-            <h1 style={{textAlign: 'center'}}>Car Listings</h1>
+        <div className="container">
+            <h1>Car Listings</h1>
             <ul>
                 {listings.map(listing => (
                     <li key={listing.id}>
