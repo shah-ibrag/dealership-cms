@@ -2,7 +2,7 @@ export const Header = ()=> {
 return (
   <>
       <header>
-        <div class="header-content">
+        <div className="header-content">
             <h1>Dealership CMS</h1>
             <p>Content Management For Dealerships</p>
         </div>

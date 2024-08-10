@@ -6,7 +6,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 $host = 'localhost';
 $db = 'dealershipDB';
 $user = 'root';
-$pass = 'your_password';
+$pass = '';
 $charset = 'utf8mb4';
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [

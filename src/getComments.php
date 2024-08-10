@@ -21,18 +21,18 @@ try {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
-$carId = $_GET['id'] ?? null;
+$carId = $_GET['comments'] ?? null;
 
 if ($carId) {
     $stmt = $pdo->prepare('
-        SELECT Comments.listing_id, Comments.user, Comments.comment, Comments.date
+        SELECT listing_id, user, comment, date
         FROM Comments
-        WHERE Comments.car_id = :car_id
+        WHERE listing_id = :id
     ');
-    $stmt->execute(['car_id' => $carId]);
-    $comments = $stmt->fetchAll();
+    $stmt->execute(['id' => $carId]);
+    $car = $stmt->fetch();
     header('Content-Type: application/json');
-    echo json_encode($comments);
+    echo json_encode($car);
 } else {
     http_response_code(400);
     echo json_encode(['error' => 'Car ID is required']);
