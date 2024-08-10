@@ -1,0 +1,9 @@
+button.on {
+    background-color: #4CAF50;
+    color: white;
+}
+
+button.off {
+    background-color: #f44336;
+    color: white;
+}
