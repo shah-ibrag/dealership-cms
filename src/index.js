@@ -1,12 +1,16 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import CarListings from './CarListings';
+import ListingDetail from './ListingDetail';
 
-import Listings from './Listings';
-
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-    <Listings />
+ReactDOM.render(
+  <Router>
+    <Routes>
+      <Route path="/" element={<CarListings />} />
+      
+      <Route path="/id/?id" element={<ListingDetail />} />
+    </Routes>
+  </Router>,
+  document.getElementById('root')
 );
-
-

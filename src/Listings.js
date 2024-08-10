@@ -21,7 +21,7 @@ const CarListings = () => {
             <ul>
                 {listings.map(listing => (
                     <li key={listing.id}>
-                        <h2 href={`${process.env.PUBLIC_URL}/id/${listing.id}`}>{listing.make} {listing.model}</h2>
+                        <h2 href={`http://localhost/getCar.php?id=${listing.id}`}>{listing.make} {listing.model}</h2>
                         <img src={`${process.env.PUBLIC_URL}/photos/${listing.img_path}`} alt='car image' />
                         <p>Type: {listing.type}</p>
                         <p>Price: ${listing.price}</p>
