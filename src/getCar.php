@@ -21,8 +21,7 @@ try {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
-$carId = $data['id'] ?? null;
+$carId = $_GET['id'] ?? null;
 
 if ($carId) {
     $stmt = $pdo->prepare('
