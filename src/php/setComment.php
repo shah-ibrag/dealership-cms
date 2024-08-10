@@ -21,20 +21,27 @@ try {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
-$carId = $_GET['id'] ?? null;
+$data = json_decode(file_get_contents('php://input'), true);
 
-if ($carId) {
+$listingId = $data['listing_id'] ?? null;
+$user = $data['user'] ?? null;
+$comment = $data['comment'] ?? null;
+$date = $data['date'] ?? null;
+
+if ($listingId && $user && $comment && $date) {
     $stmt = $pdo->prepare('
-        SELECT *
-        FROM Comments
-        WHERE listing_id = :id
+        INSERT INTO Comments (listing_id, user, comment, date)
+        VALUES (:listing_id, :user, :comment, :date)
     ');
-    $stmt->execute(['id' => $carId]);
-    $comments = $stmt->fetchAll();
-    header('Content-Type: application/json');
-    echo json_encode($comments);
+    $stmt->execute([
+        'listing_id' => $listingId,
+        'user' => $user,
+        'comment' => $comment,
+        'date' => $date
+    ]);
+    http_response_code(201);
+    echo json_encode(['message' => 'Comment added successfully']);
 } else {
-    http_response_code(400);
-    echo json_encode(['error' => 'Car ID is required']);
+    echo($e->getMessage());
 }
 ?>

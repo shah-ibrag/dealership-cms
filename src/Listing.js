@@ -6,6 +6,7 @@ import { Header } from "./Header";
 
 const CarListing = () => {
   const [listing, setListing] = useState(null);
+  const [comments, setComments] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
@@ -28,6 +29,19 @@ const CarListing = () => {
         console.error("There was an error fetching the listing!", error);
       });
   }, []);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost/getComments.php?id=${id}`)
+      .then((response) => {
+        setComments(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the comments!", error);
+      });
+  }, []);
+  
 
   return (
     <>
@@ -52,6 +66,20 @@ const CarListing = () => {
             <p>Price: ${listing.price}</p>
             <p>Description: {listing.description}</p>
           </div>
+        )}
+      </div>
+      <div className = "comments">
+        <h2>Comments</h2>
+        {comments && (
+          <ul>
+            {comments.map((comment) => (
+              <li key={comment.id}>
+                <p>{comment.comment}</p>
+                <p>By: {comment.user}</p>
+                <p>Date: {comment.date}</p>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </>
