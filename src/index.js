@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import CarListings from './CarListings';
-import ListingDetail from './ListingDetail';
+
+import Cars from './Listings'
+import Car from './Listing'
 
 ReactDOM.render(
   <Router>
     <Routes>
-      <Route path="/" element={<CarListings />} />
-      
-      <Route path="/id/?id" element={<ListingDetail />} />
+      <Route path="/" element={<Cars />} />
+      <Route path="/id/?id" element={<Car />} />
     </Routes>
   </Router>,
   document.getElementById('root')

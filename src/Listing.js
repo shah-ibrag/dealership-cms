@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './listings.css';
+import { useParams } from 'react-router-dom';
+
+import { Header } from './Header';
 
 const CarListing = () => {
     const [listing, setListing] = useState(null);
+    const {id}= useParams()
+
+    console.log(id)
 
     // useEffect(() => {
     //     axios.get(`http://localhost/getCar.php?id=${listing.id}`)
@@ -16,7 +22,9 @@ const CarListing = () => {
     // }, []);
 
     return (
-        <div className="container">
+        <>
+        <Header/>
+        {/* <div className="container">
             <h1>Car Listing</h1>
             <ul>
                 <li>
@@ -28,7 +36,8 @@ const CarListing = () => {
                 </li>
 
             </ul>
-        </div>
+        </div> */}
+        </>
     );
 };
 
