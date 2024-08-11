@@ -25,7 +25,7 @@ export const Header = () => {
             <a href="/">Listings</a>
           </li>
           <li>
-            <a href="#">Categories</a>
+            <a href="/categories">Categories</a>
           </li>
           <li>
             <a href="#">Search</a>

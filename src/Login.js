@@ -7,7 +7,6 @@ const SignInForm = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Handle form submission logic here
     console.log("Username:", Username);
     console.log("Password:", password);
   };

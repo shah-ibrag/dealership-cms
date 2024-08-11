@@ -8,6 +8,7 @@ import Cars from "./Listings";
 import Car from "./Listing";
 import CarForm from "./CarForm";
 import Login from "./Login";
+import Categories from "./Categories";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -20,6 +21,7 @@ root.render(
         <Route path="/id/:id" element={<Car />} />
         <Route path="/carForm" element={<CarForm />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/categories" element={<Categories />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
