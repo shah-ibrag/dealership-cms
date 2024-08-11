@@ -97,7 +97,7 @@ const CarListing = () => {
               {listing.make} {listing.model}
             </a>
             <img
-              src={`localhost/photos/${listing.img_path}`}
+              src={`http://localhost/${listing.img_path}`}
               alt="car image"
             />
             <p>Type: {listing.type}</p>

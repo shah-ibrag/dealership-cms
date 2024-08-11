@@ -25,10 +25,9 @@ function cors() {
     
         exit(0);
     }
-    
-    echo "You have CORS!";
 }
 cors();
+
 
 $host = 'localhost';
 $db = 'dealershipDB';
@@ -48,46 +47,57 @@ try {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $make = $_POST['make'] ?? null;
+    $model = $_POST['model'] ?? null;
+    $price = $_POST['price'] ?? null;
+    $description = $_POST['description'] ?? null;
+    $type_id = $_POST['type_id'] ?? null;
+    $img_path = null;
 
-$make = $data['make'] ?? null;
-$model = $data['model'] ?? null;
-$price = $data['price'] ?? null;
-$description = $data['description'] ?? null;
-$type_id = $data['type'] ?? null;
-$photo = $_FILES['photo'] ?? null;
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = 'photos/';
+        $uploadFile = $uploadDir . basename($_FILES['image']['name']);
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadFile)) {
+            $img_path = $uploadFile;
+        } else {
+            http_response_code(500);
+            echo json_encode(['message' => 'Failed to upload image']);
+            exit;
+        }
+    }
 
-$error_message = '';
-
-if ($make && $model && $price && $description && $type_id && $photo) {
-    // Save the photo in a folder
-    $targetDir = 'localhost/photos/'; // Replace with the actual folder path
-    $targetFile = $targetDir . basename($photo['name']);
-    move_uploaded_file($photo['tmp_name'], $targetFile);
-
-    // Save the car details in the database
-    $stmt = $pdo->prepare('
-        INSERT INTO Cars (make, model, price, description, type_id, img_path)
-        VALUES (:make, :model, :price, :description, :type_id, :img_path)
-    ');
-    $stmt->execute([
-        'make' => $make,
-        'model' => $model,
-        'price' => $price,
-        'description' => $description,
-        'type_id' => $type_id,
-        'img_path' => $targetFile
-    ]);
-    http_response_code(201);
-    echo json_encode(['message' => 'Car added successfully']);
+    if ($make && $model && $price && $description && $type_id && $img_path) {
+        $stmt = $pdo->prepare('
+            INSERT INTO Cars (make, model, price, description, type_id, img_path)
+            VALUES (:make, :model, :price, :description, :type_id, :img_path)
+        ');
+        $stmt->execute([
+            'make' => $make,
+            'model' => $model,
+            'price' => $price,
+            'description' => $description,
+            'type_id' => $type_id,
+            'img_path' => $img_path
+        ]);
+        http_response_code(201);
+        echo json_encode(['message' => 'Car added successfully']);
+    } else {
+        http_response_code(400);
+        echo json_encode([
+            'message' => 'Invalid data',
+            'errors' => [
+                'make' => $make ? null : 'Make is required',
+                'model' => $model ? null : 'Model is required',
+                'price' => $price ? null : 'Price is required',
+                'description' => $description ? null : 'Description is required',
+                'type_id' => $type_id ? null : 'Type ID is required',
+                'img_path' => $img_path ? null : 'Image upload failed'
+            ]
+        ]);
+    }
 } else {
-    if (!$make) $error_message .= 'Make is missing. ';
-    if (!$model) $error_message .= 'Model is missing. ';
-    if (!$price) $error_message .= 'Price is missing. ';
-    if (!$description) $error_message .= 'Description is missing. ';
-    if (!$type_id) $error_message .= 'Type ID is missing. ';
-    if (!$img_path) $error_message .= 'Image path is missing. ';
-    http_response_code(400);
-    echo json_encode(['message' => 'Invalid data', 'error' => $error_message]);
+    http_response_code(405);
+    echo json_encode(['message' => 'Method not allowed']);
 }
 ?>

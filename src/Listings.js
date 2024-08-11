@@ -27,7 +27,7 @@ const CarListings = () => {
                     <li key={listing.id}>
                         {/* <h2 href={`http://localhost/getCar.php?id=${listing.id}`}>{listing.make} {listing.model}</h2> */}
                         <Link to={`/id/${listing.id}`}>{listing.make} {listing.model}</Link>
-                        <img src={`http://localhost/photos/${listing.img_path}`} alt='car image' />
+                        <img src={`http://localhost/${listing.img_path}`} alt='car image' />
                         <p>Type: {listing.type}</p>
                         <p>Price: ${listing.price}</p>
                         <p>Description: {listing.description}</p>
