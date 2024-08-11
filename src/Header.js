@@ -10,7 +10,7 @@ return (
     </header>
     <nav id="menu">
         <ul>
-            <li><a href="#">Listings</a></li>
+            <li><a href="/">Listings</a></li>
             <li><a href="#">Categories</a></li>
             <li><a href="#">Search</a></li>
         </ul>

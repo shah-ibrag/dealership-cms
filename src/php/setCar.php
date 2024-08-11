@@ -1,15 +1,7 @@
 <?php
-/**
- *  An example CORS-compliant method.  It will allow any GET, POST, or OPTIONS requests from any
- *  origin.
- *
- *  In a production environment, you probably want to be more restrictive, but this gives you
- *  the general idea of what is involved.  For the nitty-gritty low-down, read:
- *
- *  - https://developer.mozilla.org/en/HTTP_access_control
- *  - https://fetch.spec.whatwg.org/#http-cors-protocol
- *
- */
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 function cors() {
     
     // Allow from any origin
@@ -38,7 +30,6 @@ function cors() {
 }
 cors();
 
-
 $host = 'localhost';
 $db = 'dealershipDB';
 $user = 'root';
@@ -59,27 +50,44 @@ try {
 
 $data = json_decode(file_get_contents('php://input'), true);
 
-$listingId = $data['listing_id'] ?? null;
-$user = $data['user'] ?? null;
-$comment = $data['comment'] ?? null;
-$date = $data['date'] ?? null;
+$make = $data['make'] ?? null;
+$model = $data['model'] ?? null;
+$price = $data['price'] ?? null;
+$description = $data['description'] ?? null;
+$type_id = $data['type'] ?? null;
+$photo = $_FILES['photo'] ?? null;
 
-if ($listingId && $user && $comment && $date) {
+$error_message = '';
+
+if ($make && $model && $price && $description && $type_id && $photo) {
+    // Save the photo in a folder
+    $targetDir = 'localhost/photos/'; // Replace with the actual folder path
+    $targetFile = $targetDir . basename($photo['name']);
+    move_uploaded_file($photo['tmp_name'], $targetFile);
+
+    // Save the car details in the database
     $stmt = $pdo->prepare('
-        INSERT INTO Comments (listing_id, user, comment, date)
-        VALUES (:listing_id, :user, :comment, :date)
+        INSERT INTO Cars (make, model, price, description, type_id, img_path)
+        VALUES (:make, :model, :price, :description, :type_id, :img_path)
     ');
     $stmt->execute([
-        'listing_id' => $listingId,
-        'user' => $user,
-        'comment' => $comment,
-        'date' => $date
+        'make' => $make,
+        'model' => $model,
+        'price' => $price,
+        'description' => $description,
+        'type_id' => $type_id,
+        'img_path' => $targetFile
     ]);
     http_response_code(201);
-    echo json_encode(['message' => 'Comment added successfully']);
+    echo json_encode(['message' => 'Car added successfully']);
 } else {
+    if (!$make) $error_message .= 'Make is missing. ';
+    if (!$model) $error_message .= 'Model is missing. ';
+    if (!$price) $error_message .= 'Price is missing. ';
+    if (!$description) $error_message .= 'Description is missing. ';
+    if (!$type_id) $error_message .= 'Type ID is missing. ';
+    if (!$img_path) $error_message .= 'Image path is missing. ';
     http_response_code(400);
-    echo json_encode(['message' => 'Invalid data']);
-    
+    echo json_encode(['message' => 'Invalid data', 'error' => $error_message]);
 }
 ?>

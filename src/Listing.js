@@ -37,6 +37,11 @@ const CarListing = () => {
 
     .then((response) => {
       console.log(response);
+      setComments([...comments, {
+        user: name,
+        comment: comment,
+        date: formattedDate
+      }]);
     })
     .catch((error) => {
       console.error("There was an error adding the comment!", error);
@@ -68,7 +73,6 @@ const CarListing = () => {
       .get(`http://localhost/getComments.php?id=${id}`)
       .then((response) => {
         setComments(response.data);
-
         console.log(response.data);
       })
       .catch((error) => {
@@ -93,7 +97,7 @@ const CarListing = () => {
               {listing.make} {listing.model}
             </a>
             <img
-              src={`${process.env.PUBLIC_URL}/photos/${listing.img_path}`}
+              src={`localhost/photos/${listing.img_path}`}
               alt="car image"
             />
             <p>Type: {listing.type}</p>
@@ -107,7 +111,7 @@ const CarListing = () => {
         <form>
           {/* <textarea name="comment" id="comment" required></textarea> */}
           <label htmlFor="user">Your name: </label>
-          <input type="text" name="user" id="user" required />
+          <input type="text" name="user" id="user" required onChange={(e) => setName(e.target.value)}/>
           <br />
           <br />
           <Editor value={comment} onChange={onChange} /> 
@@ -121,9 +125,9 @@ const CarListing = () => {
         <h2>Comments</h2>
         {comments && (
           <ul>
-            {comments.map((comment) => (
-              <li key={comment.id}>
-                <p>{comment.comment}</p>
+            {comments.map((comment, index) => (
+              <li key={index}>
+                <p dangerouslySetInnerHTML={{ __html: comment.comment }}></p>
                 <p>By: {comment.user}</p>
                 <p>Date: {comment.date}</p>
               </li>
