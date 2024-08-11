@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-
 import { Header } from "./Header";
+import Editor from 'react-simple-wysiwyg';
+
 
 const CarListing = () => {
   const [listing, setListing] = useState(null);
@@ -10,6 +11,37 @@ const CarListing = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
+  const [comment, setComment] = useState('');
+  const [name, setName] = useState('');
+
+  
+  function onChange(e) {
+    setComment(e.target.value);
+  }
+
+  function onSubmit(e) {
+    e.preventDefault();
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0
+    const day = String(date.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    console.log(id, name, comment, formattedDate);
+    axios.post(`http://localhost/setComment.php`, {
+      listing_id: id,
+      user: name,
+      comment: comment,
+      date: formattedDate
+
+    })
+
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.error("There was an error adding the comment!", error);
+    });
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -31,10 +63,12 @@ const CarListing = () => {
   }, []);
 
   useEffect(() => {
+
     axios
       .get(`http://localhost/getComments.php?id=${id}`)
       .then((response) => {
         setComments(response.data);
+
         console.log(response.data);
       })
       .catch((error) => {
@@ -68,6 +102,21 @@ const CarListing = () => {
           </div>
         )}
       </div>
+      <div className = "add-comment">
+        <h2>Add a Comment</h2>
+        <form>
+          {/* <textarea name="comment" id="comment" required></textarea> */}
+          <label htmlFor="user">Your name: </label>
+          <input type="text" name="user" id="user" required />
+          <br />
+          <br />
+          <Editor value={comment} onChange={onChange} /> 
+          <button type="button" onClick={onSubmit}>Add Comment</button>      
+          {/* <input type="text" name="comment" id="comment" required />
+          <button type="submit">Add Comment</button> */}
+          
+        </form>
+      </div>
       <div className = "comments">
         <h2>Comments</h2>
         {comments && (
@@ -82,6 +131,7 @@ const CarListing = () => {
           </ul>
         )}
       </div>
+
     </>
   );
 };

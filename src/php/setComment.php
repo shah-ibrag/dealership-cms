@@ -42,6 +42,8 @@ if ($listingId && $user && $comment && $date) {
     http_response_code(201);
     echo json_encode(['message' => 'Comment added successfully']);
 } else {
-    echo($e->getMessage());
+    http_response_code(400);
+    echo json_encode(['message' => 'Invalid data']);
+    
 }
 ?>
