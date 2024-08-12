@@ -1,102 +1,119 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Header } from "./Header";
 
-export default function CarForm() {
+const CarForm = () => {
+  const [make, setMake] = useState("");
+  const [model, setModel] = useState("");
+  const [price, setPrice] = useState("");
+  const [description, setDescription] = useState("");
+  const [typeId, setTypeId] = useState("");
+  const [image, setImage] = useState(null);
+  const [message, setMessage] = useState("");
+  const [carTypes, setCarTypes] = useState([]);
+
+  useEffect(() => {
+    const fetchCarTypes = async () => {
+      try {
+        const response = await axios.get("http://localhost/getTypes.php");
+        setCarTypes(response.data);
+      } catch (error) {
+        console.error("Error fetching car types:", error);
+      }
+    };
+
+    fetchCarTypes();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("make", make);
+    formData.append("model", model);
+    formData.append("price", price);
+    formData.append("description", description);
+    formData.append("type_id", typeId);
+    formData.append("image", image);
+
+    try {
+      const response = await axios.post("http://localhost/setCar.php", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setMessage(response.data.message);
+    } catch (error) {
+      setMessage("Error: " + error.response.data.message);
+    }
+  };
+
   return (
     <>
       <Header />
-      <form>
-        <div className="mb-4">
-          <label htmlFor="make" className="block text-gray-700 font-bold mb-2">
-            Make:
-          </label>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Make:</label>
           <input
             type="text"
-            id="make"
-            name="make"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter car make"
+            value={make}
+            onChange={(e) => setMake(e.target.value)}
+            required
           />
         </div>
-
-        <div className="mb-4">
-          <label htmlFor="model" className="block text-gray-700 font-bold mb-2">
-            Model:
-          </label>
+        <div>
+          <label>Model:</label>
           <input
             type="text"
-            id="model"
-            name="model"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter car model"
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+            required
           />
         </div>
-
-        <div className="mb-4">
-          <label htmlFor="price" className="block text-gray-700 font-bold mb-2">
-            Price:
-          </label>
+        <div>
+          <label>Price:</label>
           <input
             type="number"
-            id="price"
-            name="price"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter car price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            required
           />
         </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="description"
-            className="block text-gray-700 font-bold mb-2"
-          >
-            Description:
-          </label>
+        <div>
+          <label>Description:</label>
           <textarea
-            id="description"
-            name="description"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter car description"
-            rows="4"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
           ></textarea>
         </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="type_id"
-            className="block text-gray-700 font-bold mb-2"
+        <div>
+          <label>Type:</label>
+          <select
+            value={typeId}
+            onChange={(e) => setTypeId(e.target.value)}
+            required
           >
-            Type ID:
-          </label>
-          <input
-            type="text"
-            id="type_id"
-            name="type_id"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Enter type ID"
-          />
+            <option value="">Select a type</option>
+            {carTypes.map((type) => (
+              <option key={type.id} value={type.id}>
+                {type.type}
+              </option>
+            ))}
+          </select>
         </div>
-
-        <div className="mb-4">
-          <label htmlFor="image" className="block text-gray-700 font-bold mb-2">
-            Image:
-          </label>
+        <div>
+          <label>Image:</label>
           <input
             type="file"
-            id="image"
-            name="image"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            onChange={(e) => setImage(e.target.files[0])}
+            required
           />
         </div>
-
-        <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Submit
-          </button>
-        </div>
+        <button type="submit">Add Car</button>
+        {message && <p>{message}</p>}
       </form>
     </>
   );
-}
+};
+
+export default CarForm;
